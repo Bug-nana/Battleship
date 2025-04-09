@@ -2,7 +2,6 @@ package Battleship;//Entry of the program
 
 import javax.sound.sampled.*;
 import java.io.File;
-import java.io.IOException;
 
 public class Main extends Thread {
     // Volume control
@@ -11,6 +10,7 @@ public class Main extends Thread {
 
 
     public static void main(String[] args) {
+
 
         new Frame1();
         playBGM();
