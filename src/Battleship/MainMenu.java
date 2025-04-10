@@ -7,6 +7,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import static Battleship.Main.bgm;
+
 
 public class MainMenu extends JPanel {
     private JButton btnStart, btnSetting, btnInstruction, btnExit;
@@ -38,6 +40,10 @@ public class MainMenu extends JPanel {
         btnStart.setOpaque(false);
         btnStart.setBorder(new LineBorder(Color.BLACK, 7, true));
         add(btnStart, c);
+        btnStart.addActionListener(e -> {
+            bgm.changeTrack("res/BGM/BattleBGM.wav");
+            CardLayoutPanel.updatePanel(3);
+        });
 
         c.gridy = 2;
         c.insets = new Insets(10, 0, 10, 0);

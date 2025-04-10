@@ -33,18 +33,20 @@ public class CardLayoutPanel extends JPanel {
         JPanel menuPanel = new MainMenu();
         JPanel settingsPanel = new Setting();
         JPanel instructionPanel = new Instruction();
+        JPanel gamePanel = new gamePanel();
 
 
         // Add cards to card panel
         cardPanel.add(menuPanel, "Menu");
         cardPanel.add(settingsPanel, "Settings");
         cardPanel.add(instructionPanel, "Instruction");
+        cardPanel.add(gamePanel, "Game");
 
         // Add to frame
         add(cardPanel);
 
         // Show initial card
-        cardLayout.show(cardPanel, "Menu");
+        cardLayout.show(cardPanel, "Instruction");
 
     }
 
@@ -55,6 +57,9 @@ public class CardLayoutPanel extends JPanel {
                 break;
             case 2:
                 cardLayout.show(cardPanel, "Instruction");
+                break;
+            case 3:
+                cardLayout.show(cardPanel, "Game");
                 break;
             default:
                 cardLayout.show(cardPanel, "Menu");
