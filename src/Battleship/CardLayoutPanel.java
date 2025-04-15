@@ -14,11 +14,11 @@ public class CardLayoutPanel extends JPanel {
     private BufferedImage backgroundImage;
 
 
-    public CardLayoutPanel() {
+    public CardLayoutPanel(String filename) {
 
         try {
             // Load the image once when the panel is created
-            backgroundImage = ImageIO.read(new File("res/MainMenu/background.jpg"));
+            backgroundImage = ImageIO.read(new File(filename));
         } catch (IOException e) {
             e.printStackTrace(); // Handle exception
         }
@@ -46,7 +46,7 @@ public class CardLayoutPanel extends JPanel {
         add(cardPanel);
 
         // Show initial card
-        cardLayout.show(cardPanel, "Instruction");
+        cardLayout.show(cardPanel, "Menu");
 
     }
 

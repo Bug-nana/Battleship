@@ -41,8 +41,9 @@ public class MainMenu extends JPanel {
         btnStart.setBorder(new LineBorder(Color.BLACK, 7, true));
         add(btnStart, c);
         btnStart.addActionListener(e -> {
-            bgm.changeTrack("res/BGM/BattleBGM.wav");
+            Frame1.switchFrame("res/MainMenu/background2.jpg");
             CardLayoutPanel.updatePanel(3);
+            bgm.changeTrack("res/BGM/BattleBGM.wav");
         });
 
         c.gridy = 2;

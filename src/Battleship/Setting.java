@@ -7,6 +7,7 @@ import static Battleship.Frame1.frameHeight;
 import static Battleship.Frame1.frameWidth;
 
 
+
 public class Setting extends JPanel {
 
     private JLabel lbl, lblVolume, lbl2;

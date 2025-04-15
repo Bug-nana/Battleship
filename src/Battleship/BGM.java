@@ -12,7 +12,7 @@ public class BGM {
     private static FloatControl gainControl;
     private static float volumeDb = (float) (20f * Math.log10(Setting.bgmVolume / 100f));
     private Clip currentClip;
-
+    private AudioInputStream audioStream;
 
     public BGM(String filename){
         playBGM(filename);
@@ -21,7 +21,7 @@ public class BGM {
     public void playBGM(String filename){
         try {
             File audioFile = new File(filename);
-            AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioFile);
+            audioStream = AudioSystem.getAudioInputStream(audioFile);
             currentClip = AudioSystem.getClip();
             currentClip.open(audioStream);
 
@@ -48,14 +48,7 @@ public class BGM {
                 currentClip.close(); // Close the current clip
             }
 
-            File audioFile = new File(filename);
-            AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioFile);
-            currentClip = AudioSystem.getClip();
-            currentClip.open(audioStream);
-
-            // Play the new BGM in a loop
-            currentClip.loop(Clip.LOOP_CONTINUOUSLY);
-            currentClip.start();
+            playBGM(filename);
 
         } catch (Exception e) {
             e.printStackTrace();
