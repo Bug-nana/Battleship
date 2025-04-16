@@ -1,8 +1,9 @@
 package Battleship;
 
+import javax.swing.*;
 import java.util.Random;
 
-import static Battleship.gamePanel.SIZE;
+import static Battleship.gamePanel.*;
 
 public class GameLogic {
 
@@ -164,7 +165,7 @@ public class GameLogic {
     public String handleShot(int row, int col, int side) {
 
         if (side == 0) {
-            if (opponentTiles[row][col] != 0) {
+            if (opponentTiles[row][col] != 0 && opponentTiles[row][col] != -2) {
                 int shipNumber = opponentTiles[row][col];
                 opponentTiles[row][col] = -1; // Mark as hit (using -1 as hit marker)
 
@@ -182,10 +183,11 @@ public class GameLogic {
             } else {
                 GameStatus.lblShot.setText("Last Shot: Miss!");
                 sound.miss();
+                opponentTiles[row][col] = -2; // Mark miss
                 return "Miss!";
             }
         } else {
-            if (playerTiles[row][col] != 0) {
+            if (playerTiles[row][col] != 0 && playerTiles[row][col] != -2) {
                 int shipNumber = playerTiles[row][col];
                 playerTiles[row][col] = -1; // Mark as hit (using -1 as hit marker)
 
@@ -199,6 +201,7 @@ public class GameLogic {
                 return "Hit!";
             } else {
                 sound.miss();
+                playerTiles[row][col] = -2;
                 return "Miss!";
             }
         }
@@ -239,6 +242,64 @@ public class GameLogic {
         } else {
             return playerShip;
         }
+
+    }
+
+
+    // Computer chooses a random tile to attack on the player's board
+    public void getComputerMove() {
+
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                opponentButtons[i][j].setEnabled(false);
+            }
+        }
+
+        new Timer(100, f -> {
+            int row, col;
+            do {
+                row = random.nextInt(size);
+                col = random.nextInt(size);
+                // Skip if already tried (hit or miss)
+            } while (playerTiles[row][col] == -1 || playerTiles[row][col] == -2);
+
+            String result = handleShot(row, col, 1);
+            if (result.equals("Hit!")) {
+                ImageIcon icon = new ImageIcon("res/Game/Ship/" + "hit.png");
+                playerButtons[row][col].setIcon(icon);
+
+
+            } else if (result.equals("Miss!")) {
+                ImageIcon icon = new ImageIcon("res/Game/Ship/" + "miss.png");
+                playerButtons[row][col].setIcon(icon);
+
+
+            } else if (result.equals("Ship Sunk!")) {
+                ImageIcon icon = new ImageIcon("res/Game/Ship/" + "hit.png");
+                playerButtons[row][col].setIcon(icon);
+                //JOptionPane.showMessageDialog(null, "A ship has been sunk!");
+
+
+            }
+            ((Timer) f.getSource()).stop(); // Stop the timer
+        }).start();
+
+
+
+        new Timer(200, e -> {
+            // Re-enable player input
+            for (int i = 0; i < SIZE; i++) {
+                for (int j = 0; j < SIZE; j++) {
+                    opponentButtons[i][j].setEnabled(true);
+                }
+            }
+            ((Timer) e.getSource()).stop(); // Stop the timer
+        }).start();
+
+
+
+
+
 
     }
 

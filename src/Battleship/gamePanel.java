@@ -9,8 +9,8 @@ import static Battleship.Main.bgm;
 public class gamePanel extends JPanel {
 
     public static final int SIZE = 6; // Size of the grid (4x4 for this example)
-    private final JButton[][] opponentButtons = new JButton[SIZE][SIZE];
-    private final JButton[][] playerButtons = new JButton[SIZE][SIZE];
+    public static JButton[][] opponentButtons = new JButton[SIZE][SIZE];
+    public static JButton[][] playerButtons = new JButton[SIZE][SIZE];
     private final JPanel opponentPanel;
     private final JPanel playerPanel;
     private final JPanel statusPanel;
@@ -164,7 +164,7 @@ public class gamePanel extends JPanel {
                     int tile = original_opponentTiles[i][j];
                     int tile2 = opponentTiles[i][j];
 
-                    if (tile != 0 && tile2 != -1) {
+                    if (tile != 0 && tile2 != -1 && tile2 != -2) {
                         // Use different images for part 1 and part 2 of the ship
                         String imageName = getShipImageName(original_opponentTiles, i, j, 0);
                         ImageIcon icon = new ImageIcon("res/Game/Ship/" + imageName);
@@ -184,6 +184,12 @@ public class gamePanel extends JPanel {
             CardLayoutPanel.updatePanel(0);
             Frame1.switchFrame("res/MainMenu/background.jpg");
 
+        }else{
+            // Create a timer to delay the computer move
+            new Timer(10, f -> {
+                gameLogic.getComputerMove();  // Make computer move after 1 second
+                ((Timer) f.getSource()).stop(); // Stop the timer
+            }).start();
         }
     }
 
@@ -222,13 +228,20 @@ public class gamePanel extends JPanel {
                     } else if (result.equals("Ship Sunk!")) {
                         ImageIcon icon = new ImageIcon("res/Game/Ship/" + "hit.png");
                         button[row][col].setIcon(icon);
-                        JOptionPane.showMessageDialog(null, "A ship has been sunk!");
+                        //JOptionPane.showMessageDialog(null, "A ship has been sunk!");
 
 
                     }
 
+
                     // Update the number of remaining ships
                     updateRemainingShips();
+
+
+
+
+
+
                 });
 
                 Panel.add(button[i][j]);
