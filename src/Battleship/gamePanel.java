@@ -11,6 +11,8 @@ public class gamePanel extends JPanel {
     private JButton[][] playerButtons = new JButton[SIZE][SIZE];
     private JPanel opponentPanel;
     private JPanel playerPanel;
+    SoundEffect sound = new SoundEffect();
+
 
     private GameLogic gameLogic = new GameLogic(); // GameLogic instance to fetch the grid data
 
@@ -179,14 +181,20 @@ public class gamePanel extends JPanel {
                     if (result.equals("Hit!")) {
                         ImageIcon icon = new ImageIcon("res/Game/Ship/" + "hit.png");
                         button[row][col].setIcon(icon);
+
+                        sound.hit(); // Ensure this file exists in your project path
+
                     } else if (result.equals("Miss!")) {
                         ImageIcon icon = new ImageIcon("res/Game/Ship/" + "miss.png");
                         button[row][col].setIcon(icon);
+
+                        sound.miss();
+
                     } else if (result.equals("Ship Sunk!")) {
                         ImageIcon icon = new ImageIcon("res/Game/Ship/" + "hit.png");
                         button[row][col].setIcon(icon);
                         JOptionPane.showMessageDialog(null, "A ship has been sunk!");
-
+                        sound.hit();
 
 
                     }
