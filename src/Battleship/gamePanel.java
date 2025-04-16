@@ -40,6 +40,7 @@ public class gamePanel extends JPanel {
     }
 
 
+
     // Update the opponent's grid to reflect the ships placed
     private void updateOpponentGrid() {
         for (int i = 0; i < SIZE; i++) {
@@ -75,17 +76,14 @@ public class gamePanel extends JPanel {
                     ImageIcon icon = new ImageIcon("res/Game/Ship/" + imageName);
 
                     button.setIcon(icon);
-                    button.setOpaque(false);
-                    button.setContentAreaFilled(false);
-                    button.setBorderPainted(true);
                 } else {
                     // Empty tile: transparent
                     button.setText("");
                     button.setIcon(null);
-                    button.setOpaque(false);
-                    button.setContentAreaFilled(false);
-                    button.setBorderPainted(true);
                 }
+                button.setOpaque(false);
+                button.setContentAreaFilled(false);
+                button.setBorderPainted(true);
 
                 // Apply a visible border to all buttons
                 button.setBorder(new LineBorder(Color.BLACK, 1));
@@ -132,17 +130,18 @@ public class gamePanel extends JPanel {
 
             JOptionPane.showMessageDialog(this, msg);
             // You can disable further interaction or close the game
-            int[][] opponentTiles = gameLogic.getOpponentTiles();
-
+            int[][] original_opponentTiles = gameLogic.getOpponentTiles(0);
+            int[][] opponentTiles = gameLogic.getOpponentTiles(1);
 
             for (int i = 0; i < SIZE; i++) {
                 for (int j = 0; j < SIZE; j++) {
                     JButton button = opponentButtons[i][j];
-                    int tile = opponentTiles[i][j];
+                    int tile = original_opponentTiles[i][j];
+                    int tile2 = opponentTiles[i][j];
 
-                    if (tile != 0) {
+                    if (tile != 0 && tile2 != -1) {
                         // Use different images for part 1 and part 2 of the ship
-                        String imageName = getShipImageName(opponentTiles, i, j);
+                        String imageName = getShipImageName(original_opponentTiles, i, j);
                         ImageIcon icon = new ImageIcon("res/Game/Ship/" + imageName);
 
                         button.setIcon(icon);
@@ -187,6 +186,9 @@ public class gamePanel extends JPanel {
                         ImageIcon icon = new ImageIcon("res/Game/Ship/" + "hit.png");
                         button[row][col].setIcon(icon);
                         JOptionPane.showMessageDialog(null, "A ship has been sunk!");
+
+
+
                     }
 
                     // Update the number of remaining ships

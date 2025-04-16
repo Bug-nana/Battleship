@@ -143,8 +143,10 @@ public class GameLogic {
         }
     }
 
-    public int[][] getOpponentTiles() {
-        return original_opponentTiles;
+    public int[][] getOpponentTiles(int mode) {
+        if (mode == 0) {return original_opponentTiles;}
+        else if (mode == 1) {return opponentTiles;}
+        return null;
     }
 
     public int[][] getPlayerTiles() {
