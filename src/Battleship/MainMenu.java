@@ -11,9 +11,11 @@ import static Battleship.Main.bgm;
 
 
 public class MainMenu extends JPanel {
-    private JButton btnStart, btnSetting, btnInstruction, btnExit;
     private static JLabel lblBattleship;
-
+    private final JButton btnStart;
+    private final JButton btnSetting;
+    private final JButton btnInstruction;
+    private final JButton btnExit;
 
 
     public MainMenu() {
@@ -52,7 +54,9 @@ public class MainMenu extends JPanel {
         btnInstruction.setOpaque(false);
         btnInstruction.setBorder(new LineBorder(new Color(0, 112, 207), 5, true));  // Color and thickness of border
         add(btnInstruction, c);
-        btnInstruction.addActionListener(e -> {CardLayoutPanel.updatePanel(2);});
+        btnInstruction.addActionListener(e -> {
+            CardLayoutPanel.updatePanel(2);
+        });
 
         c.gridy = 3;
         JPanel panel1 = new JPanel(new FlowLayout());
@@ -65,14 +69,18 @@ public class MainMenu extends JPanel {
         btnSetting.setContentAreaFilled(false);
         btnSetting.setBorderPainted(false);
         panel1.add(btnSetting);
-        btnSetting.addActionListener(e -> {CardLayoutPanel.updatePanel(1);});
+        btnSetting.addActionListener(e -> {
+            CardLayoutPanel.updatePanel(1);
+        });
 
         btnExit = new JButton(new ImageIcon("res/MainMenu/ExitButton.png"));
         btnExit.setOpaque(false);
         btnExit.setContentAreaFilled(false);
         btnExit.setBorderPainted(false);
         panel1.add(btnExit);
-        btnExit.addActionListener(e -> {System.exit(0);});
+        btnExit.addActionListener(e -> {
+            System.exit(0);
+        });
     }
 
 

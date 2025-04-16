@@ -14,11 +14,17 @@ public class BGM {
     private Clip currentClip;
     private AudioInputStream audioStream;
 
-    public BGM(String filename){
+    public BGM(String filename) {
         playBGM(filename);
     }
 
-    public void playBGM(String filename){
+    public static void changeVolume(float volume) {
+        Setting.bgmVolume = volume;
+        volumeDb = (float) (20f * Math.log10(Setting.bgmVolume / 100f));
+        gainControl.setValue(volumeDb);
+    }
+
+    public void playBGM(String filename) {
         try {
             File audioFile = new File(filename);
             audioStream = AudioSystem.getAudioInputStream(audioFile);
@@ -40,7 +46,7 @@ public class BGM {
         }
     }
 
-    public void changeTrack(String filename){
+    public void changeTrack(String filename) {
         try {
             // Stop the current clip if it's playing
             if (currentClip != null && currentClip.isRunning()) {
@@ -53,12 +59,6 @@ public class BGM {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    public static void changeVolume(float volume){
-        Setting.bgmVolume = volume;
-        volumeDb = (float) (20f * Math.log10(Setting.bgmVolume / 100f));
-        gainControl.setValue(volumeDb);
     }
 
 }

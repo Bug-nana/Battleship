@@ -9,8 +9,8 @@ import java.io.IOException;
 
 public class CardLayoutPanel extends JPanel {
 
-    private static CardLayout cardLayout = new CardLayout();
-    private static JPanel cardPanel = new JPanel(cardLayout);
+    private static final CardLayout cardLayout = new CardLayout();
+    private static final JPanel cardPanel = new JPanel(cardLayout);
     private BufferedImage backgroundImage;
 
 
@@ -22,7 +22,6 @@ public class CardLayoutPanel extends JPanel {
         } catch (IOException e) {
             e.printStackTrace(); // Handle exception
         }
-
 
 
         cardPanel.setOpaque(false);
@@ -50,8 +49,8 @@ public class CardLayoutPanel extends JPanel {
 
     }
 
-    public static void updatePanel(int panel){
-        switch(panel){
+    public static void updatePanel(int panel) {
+        switch (panel) {
             case 1:
                 cardLayout.show(cardPanel, "Settings");
                 break;

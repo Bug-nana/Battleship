@@ -2,33 +2,37 @@ package Battleship;
 
 import java.util.Random;
 
+import static Battleship.gamePanel.SIZE;
+
 public class GameLogic {
 
+    private static final int opp_default_amt = 4;
+    private static final int pla_default_amt = 4;
+    public static int opponentShip = opp_default_amt, playerShip = pla_default_amt;  // Number of ships to place
+    SoundEffect sound = new SoundEffect();
     private int[][] opponentTiles;
     private int[][] original_opponentTiles;
     private int[][] playerTiles;
-    private int size = 4;
-    private int opponentShip = 3;  // Number of ships to place
-    private int playerShip = 3;
-
-    private Random random = new Random();
+    private final int size = SIZE;
+    private final Random random = new Random();
 
     public GameLogic() {
         initTiles();
 
+        opponentShip = opp_default_amt;
+        playerShip = pla_default_amt;
+
         // Place the opponent ships on the board
         for (int i = 1; i <= opponentShip; i++) {
-            placeShip(i,0);  // Place each ship numbered 1, 2, 3
+            placeShip(i, 0);  // Place each ship numbered 1, 2, 3
         }
 
         for (int i = 1; i <= playerShip; i++) {
-            placeShip(i,1);  // Place each ship numbered 1, 2, 3
+            placeShip(i, 1);  // Place each ship numbered 1, 2, 3
         }
 
         printTiles();
     }
-
-
 
 
     // Initialize empty tiles
@@ -46,7 +50,7 @@ public class GameLogic {
     }
 
     // Print the board tiles
-    private void printTiles(){
+    private void printTiles() {
 
         System.out.println("Opponent Tiles: ");
         for (int i = 0; i < size; i++) {
@@ -79,7 +83,7 @@ public class GameLogic {
             int row, col;
 
 
-            if(side==0){
+            if (side == 0) {
                 if (isHorizontal) {
                     // Choose a random row and column that allows a horizontal ship
                     row = random.nextInt(size);
@@ -111,7 +115,7 @@ public class GameLogic {
                         placed = true;
                     }
                 }
-            }else{
+            } else {
                 if (isHorizontal) {
                     // Choose a random row and column that allows a horizontal ship
                     row = random.nextInt(size);
@@ -144,8 +148,11 @@ public class GameLogic {
     }
 
     public int[][] getOpponentTiles(int mode) {
-        if (mode == 0) {return original_opponentTiles;}
-        else if (mode == 1) {return opponentTiles;}
+        if (mode == 0) {
+            return original_opponentTiles;
+        } else if (mode == 1) {
+            return opponentTiles;
+        }
         return null;
     }
 
@@ -156,21 +163,28 @@ public class GameLogic {
     // Handle a shot and return the result (hit or miss)
     public String handleShot(int row, int col, int side) {
 
-        if(side==0){
+        if (side == 0) {
             if (opponentTiles[row][col] != 0) {
                 int shipNumber = opponentTiles[row][col];
                 opponentTiles[row][col] = -1; // Mark as hit (using -1 as hit marker)
 
                 // Check if the entire ship has been sunk
-                if (isShipSunk(shipNumber,side)) {
+                if (isShipSunk(shipNumber, side)) {
                     opponentShip--;  // Reduce the number of remaining ships
+                    GameStatus.lblOpponentShip.setText("Opponent Ship Remaining: " + opponentShip);
+                    GameStatus.lblShot.setText("Last Shot: Hit!");
+                    sound.hit();
                     return "Ship Sunk!";
                 }
+                GameStatus.lblShot.setText("Last Shot: Hit!");
+                sound.hit();
                 return "Hit!";
             } else {
+                GameStatus.lblShot.setText("Last Shot: Miss!");
+                sound.miss();
                 return "Miss!";
             }
-        }else{
+        } else {
             if (playerTiles[row][col] != 0) {
                 int shipNumber = playerTiles[row][col];
                 playerTiles[row][col] = -1; // Mark as hit (using -1 as hit marker)
@@ -178,14 +192,16 @@ public class GameLogic {
                 // Check if the entire ship has been sunk
                 if (isShipSunk(shipNumber, side)) {
                     playerShip--;  // Reduce the number of remaining ships
+                    sound.hit();
                     return "Ship Sunk!";
                 }
+                sound.hit();
                 return "Hit!";
             } else {
+                sound.miss();
                 return "Miss!";
             }
         }
-
 
 
     }
@@ -193,7 +209,7 @@ public class GameLogic {
     // Check if a ship is completely sunk
     private boolean isShipSunk(int shipNumber, int side) {
 
-        if(side == 0){
+        if (side == 0) {
             for (int i = 0; i < size; i++) {
                 for (int j = 0; j < size; j++) {
                     if (opponentTiles[i][j] == shipNumber) {
@@ -202,7 +218,7 @@ public class GameLogic {
                 }
             }
             return true; // Ship is completely sunk
-        }else{
+        } else {
             for (int i = 0; i < size; i++) {
                 for (int j = 0; j < size; j++) {
                     if (playerTiles[i][j] == shipNumber) {
@@ -218,9 +234,9 @@ public class GameLogic {
 
     // Get the number of remaining ships
     public int getRemainingShips(int side) {
-        if (side == 0){
+        if (side == 0) {
             return opponentShip;
-        }else {
+        } else {
             return playerShip;
         }
 
