@@ -13,6 +13,24 @@ public class GameLogic {
 
     private Random random = new Random();
 
+    public GameLogic() {
+        initTiles();
+
+        // Place the opponent ships on the board
+        for (int i = 1; i <= opponentShip; i++) {
+            placeShip(i,0);  // Place each ship numbered 1, 2, 3
+        }
+
+        for (int i = 1; i <= playerShip; i++) {
+            placeShip(i,1);  // Place each ship numbered 1, 2, 3
+        }
+
+        printTiles();
+    }
+
+
+
+
     // Initialize empty tiles
     private void initTiles() {
         opponentTiles = new int[size][size];
@@ -29,13 +47,6 @@ public class GameLogic {
 
     // Print the board tiles
     private void printTiles(){
-        System.out.println("\nPlayer Tiles: ");
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                System.out.print(playerTiles[i][j] + " ");
-            }
-            System.out.println();
-        }
 
         System.out.println("Opponent Tiles: ");
         for (int i = 0; i < size; i++) {
@@ -44,10 +55,21 @@ public class GameLogic {
             }
             System.out.println();
         }
+
+
+        System.out.println("\nPlayer Tiles: ");
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                System.out.print(playerTiles[i][j] + " ");
+            }
+            System.out.println();
+        }
+
+
     }
 
     // Place a ship that takes up 2 tiles
-    private void placeShip(int shipNumber) {
+    private void placeShip(int shipNumber, int side) {
         boolean placed = false;
 
         while (!placed) {
@@ -56,87 +78,150 @@ public class GameLogic {
 
             int row, col;
 
-            if (isHorizontal) {
-                // Choose a random row and column that allows a horizontal ship
-                row = random.nextInt(size);
-                col = random.nextInt(size - 1); // Ensure there's space for 2 tiles
 
-                // Check if the space is empty and place the ship
-                if (opponentTiles[row][col] == 0 && opponentTiles[row][col + 1] == 0) {
-                    opponentTiles[row][col] = shipNumber;
-                    opponentTiles[row][col + 1] = shipNumber;
+            if(side==0){
+                if (isHorizontal) {
+                    // Choose a random row and column that allows a horizontal ship
+                    row = random.nextInt(size);
+                    col = random.nextInt(size - 1); // Ensure there's space for 2 tiles
 
-                    original_opponentTiles[row][col] = shipNumber;
-                    original_opponentTiles[row][col + 1] = shipNumber;
+                    // Check if the space is empty and place the ship
+                    if (opponentTiles[row][col] == 0 && opponentTiles[row][col + 1] == 0) {
+                        opponentTiles[row][col] = shipNumber;
+                        opponentTiles[row][col + 1] = shipNumber;
 
-                    placed = true;
+                        original_opponentTiles[row][col] = shipNumber;
+                        original_opponentTiles[row][col + 1] = shipNumber;
+
+                        placed = true;
+                    }
+                } else {
+                    // Choose a random row and column that allows a vertical ship
+                    row = random.nextInt(size - 1); // Ensure there's space for 2 tiles
+                    col = random.nextInt(size);
+
+                    // Check if the space is empty and place the ship
+                    if (opponentTiles[row][col] == 0 && opponentTiles[row + 1][col] == 0) {
+                        opponentTiles[row][col] = shipNumber;
+                        opponentTiles[row + 1][col] = shipNumber;
+
+                        original_opponentTiles[row][col] = shipNumber;
+                        original_opponentTiles[row + 1][col] = shipNumber;
+
+                        placed = true;
+                    }
                 }
-            } else {
-                // Choose a random row and column that allows a vertical ship
-                row = random.nextInt(size - 1); // Ensure there's space for 2 tiles
-                col = random.nextInt(size);
+            }else{
+                if (isHorizontal) {
+                    // Choose a random row and column that allows a horizontal ship
+                    row = random.nextInt(size);
+                    col = random.nextInt(size - 1); // Ensure there's space for 2 tiles
 
-                // Check if the space is empty and place the ship
-                if (opponentTiles[row][col] == 0 && opponentTiles[row + 1][col] == 0) {
-                    opponentTiles[row][col] = shipNumber;
-                    opponentTiles[row + 1][col] = shipNumber;
+                    // Check if the space is empty and place the ship
+                    if (playerTiles[row][col] == 0 && playerTiles[row][col + 1] == 0) {
+                        playerTiles[row][col] = shipNumber;
+                        playerTiles[row][col + 1] = shipNumber;
 
-                    original_opponentTiles[row][col] = shipNumber;
-                    original_opponentTiles[row + 1][col] = shipNumber;
+                        placed = true;
+                    }
+                } else {
+                    // Choose a random row and column that allows a vertical ship
+                    row = random.nextInt(size - 1); // Ensure there's space for 2 tiles
+                    col = random.nextInt(size);
 
-                    placed = true;
+                    // Check if the space is empty and place the ship
+                    if (playerTiles[row][col] == 0 && playerTiles[row + 1][col] == 0) {
+                        playerTiles[row][col] = shipNumber;
+                        playerTiles[row + 1][col] = shipNumber;
+
+                        placed = true;
+                    }
                 }
             }
+
+
         }
-    }
-
-    public GameLogic() {
-        initTiles();
-
-        // Place the opponent ships on the board
-        for (int i = 1; i <= opponentShip; i++) {
-            placeShip(i);  // Place each ship numbered 1, 2, 3
-        }
-
-        printTiles();
     }
 
     public int[][] getOpponentTiles() {
         return original_opponentTiles;
     }
 
-    // Handle a shot and return the result (hit or miss)
-    public String handleShot(int row, int col) {
-        if (opponentTiles[row][col] != 0) {
-            int shipNumber = opponentTiles[row][col];
-            opponentTiles[row][col] = -1; // Mark as hit (using -1 as hit marker)
+    public int[][] getPlayerTiles() {
+        return playerTiles;
+    }
 
-            // Check if the entire ship has been sunk
-            if (isShipSunk(shipNumber)) {
-                opponentShip--;  // Reduce the number of remaining ships
-                return "Ship Sunk!";
+    // Handle a shot and return the result (hit or miss)
+    public String handleShot(int row, int col, int side) {
+
+        if(side==0){
+            if (opponentTiles[row][col] != 0) {
+                int shipNumber = opponentTiles[row][col];
+                opponentTiles[row][col] = -1; // Mark as hit (using -1 as hit marker)
+
+                // Check if the entire ship has been sunk
+                if (isShipSunk(shipNumber,side)) {
+                    opponentShip--;  // Reduce the number of remaining ships
+                    return "Ship Sunk!";
+                }
+                return "Hit!";
+            } else {
+                return "Miss!";
             }
-            return "Hit!";
-        } else {
-            return "Miss!";
+        }else{
+            if (playerTiles[row][col] != 0) {
+                int shipNumber = playerTiles[row][col];
+                playerTiles[row][col] = -1; // Mark as hit (using -1 as hit marker)
+
+                // Check if the entire ship has been sunk
+                if (isShipSunk(shipNumber, side)) {
+                    playerShip--;  // Reduce the number of remaining ships
+                    return "Ship Sunk!";
+                }
+                return "Hit!";
+            } else {
+                return "Miss!";
+            }
         }
+
+
+
     }
 
     // Check if a ship is completely sunk
-    private boolean isShipSunk(int shipNumber) {
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                if (opponentTiles[i][j] == shipNumber) {
-                    return false; // Ship is not yet sunk
+    private boolean isShipSunk(int shipNumber, int side) {
+
+        if(side == 0){
+            for (int i = 0; i < size; i++) {
+                for (int j = 0; j < size; j++) {
+                    if (opponentTiles[i][j] == shipNumber) {
+                        return false; // Ship is not yet sunk
+                    }
                 }
             }
+            return true; // Ship is completely sunk
+        }else{
+            for (int i = 0; i < size; i++) {
+                for (int j = 0; j < size; j++) {
+                    if (playerTiles[i][j] == shipNumber) {
+                        return false; // Ship is not yet sunk
+                    }
+                }
+            }
+            return true; // Ship is completely sunk
         }
-        return true; // Ship is completely sunk
+
+
     }
 
     // Get the number of remaining ships
-    public int getRemainingShips() {
-        return opponentShip;
+    public int getRemainingShips(int side) {
+        if (side == 0){
+            return opponentShip;
+        }else {
+            return playerShip;
+        }
+
     }
 
 }

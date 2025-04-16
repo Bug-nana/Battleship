@@ -7,7 +7,11 @@ import java.awt.*;
 public class gamePanel extends JPanel {
 
     private static final int SIZE = 4; // Size of the grid (4x4 for this example)
-    private JButton[][] opponentButtons;
+    private JButton[][] opponentButtons = new JButton[SIZE][SIZE];;
+    private JButton[][] playerButtons = new JButton[SIZE][SIZE];
+    private JPanel opponentPanel;
+    private JPanel playerPanel;
+
     private GameLogic gameLogic = new GameLogic(); // GameLogic instance to fetch the grid data
 
     public gamePanel() {
@@ -16,43 +20,8 @@ public class gamePanel extends JPanel {
 
         GridBagConstraints c = new GridBagConstraints();
 
-        // Create the opponent's grid panel
-        TilesBackgroundPanel opponentPanel = new TilesBackgroundPanel("res/Game/TilesBackground.jpg");
-        opponentPanel.setLayout(new GridLayout(SIZE, SIZE));
-        opponentButtons = new JButton[SIZE][SIZE];
-
-        // Add buttons to the opponent grid
-        for (int i = 0; i < SIZE; i++) {
-            for (int j = 0; j < SIZE; j++) {
-                opponentButtons[i][j] = new JButton();
-                opponentButtons[i][j].setBackground(Color.BLUE); // Blue for empty tiles
-                final int row = i;
-                final int col = j;
-
-                // Using a lambda expression for the action listener
-                opponentButtons[i][j].addActionListener(e -> {
-                    // Handle shot and update the UI
-                    String result = gameLogic.handleShot(row, col);
-
-                    if (result.equals("Hit!")) {
-                        ImageIcon icon = new ImageIcon("res/Game/Ship/" + "hit.png");
-                        opponentButtons[row][col].setIcon(icon);
-                    } else if (result.equals("Miss!")) {
-                        ImageIcon icon = new ImageIcon("res/Game/Ship/" + "miss.png");
-                        opponentButtons[row][col].setIcon(icon);
-                    } else if (result.equals("Ship Sunk!")) {
-                        ImageIcon icon = new ImageIcon("res/Game/Ship/" + "hit.png");
-                        opponentButtons[row][col].setIcon(icon);
-                        JOptionPane.showMessageDialog(null, "A ship has been sunk!");
-                    }
-
-                    // Update the number of remaining ships
-                    updateRemainingShips();
-                });
-
-                opponentPanel.add(opponentButtons[i][j]);
-            }
-        }
+        opponentPanel = createTiles(opponentButtons, 0);
+        playerPanel = createTiles(playerButtons, 1);
 
         // Add opponent panel to grid layout at position (0,0)
         c.gridx = 0;
@@ -61,6 +30,13 @@ public class gamePanel extends JPanel {
 
         // Update the grid with the ship placement from GameLogic
         updateOpponentGrid();
+
+
+        c.gridy= 1;
+        add(playerPanel, c);
+
+        updatePlayerGrid();
+
     }
 
 
@@ -84,6 +60,40 @@ public class gamePanel extends JPanel {
         }
     }
 
+    private void updatePlayerGrid() {
+        int[][] playerTiles = gameLogic.getPlayerTiles();
+
+
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                JButton button = playerButtons[i][j];
+                int tile = playerTiles[i][j];
+
+                if (tile != 0) {
+                    // Use different images for part 1 and part 2 of the ship
+                    String imageName = getShipImageName(playerTiles, i, j);
+                    ImageIcon icon = new ImageIcon("res/Game/Ship/" + imageName);
+
+                    button.setIcon(icon);
+                    button.setOpaque(false);
+                    button.setContentAreaFilled(false);
+                    button.setBorderPainted(true);
+                } else {
+                    // Empty tile: transparent
+                    button.setText("");
+                    button.setIcon(null);
+                    button.setOpaque(false);
+                    button.setContentAreaFilled(false);
+                    button.setBorderPainted(true);
+                }
+
+                // Apply a visible border to all buttons
+                button.setBorder(new LineBorder(Color.BLACK, 1));
+                button.setMargin(new Insets(0, 0, 0, 0));
+                button.setFocusable(false);
+            }
+        }
+    }
 
     private String getShipImageName(int[][] grid, int i, int j) {
         int val = Math.abs(grid[i][j]);
@@ -109,12 +119,18 @@ public class gamePanel extends JPanel {
 
     // After updating the opponent grid or handling a shot in the gamePanel class
     private void updateRemainingShips() {
-        int remainingShips = gameLogic.getRemainingShips();
-        System.out.println("Remaining opponent ships: " + remainingShips);
+        int opp_remainingShips = gameLogic.getRemainingShips(0);
+        System.out.println("Remaining opponent ships: " + opp_remainingShips);
+        int player_remainingShips = gameLogic.getRemainingShips(1);
+        System.out.println("Remaining player ships: " + player_remainingShips);
 
         // Check if the game is over
-        if (remainingShips == 0) {
-            JOptionPane.showMessageDialog(this, "Game Over! You Win!");
+        if (opp_remainingShips == 0 || player_remainingShips == 0) {
+
+            String msg = (opp_remainingShips == 0) ? "Game Over! You Win!" : "Game Over! You Lose!";
+
+
+            JOptionPane.showMessageDialog(this, msg);
             // You can disable further interaction or close the game
             int[][] opponentTiles = gameLogic.getOpponentTiles();
 
@@ -136,6 +152,53 @@ public class gamePanel extends JPanel {
             }
 
         }
+    }
+
+
+
+    private TilesBackgroundPanel createTiles(JButton[][] buttons, int side){
+
+        JButton[][] button =  buttons;
+
+        // Create the opponent's grid panel
+        TilesBackgroundPanel Panel = new TilesBackgroundPanel("res/Game/TilesBackground.jpg");
+        Panel.setLayout(new GridLayout(SIZE, SIZE));
+
+        // Add buttons to the opponent grid
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                button[i][j] = new JButton();
+                button[i][j].setBackground(Color.BLUE); // Blue for empty tiles
+                final int row = i;
+                final int col = j;
+
+                // Using a lambda expression for the action listener
+                button[i][j].addActionListener(e -> {
+                    // Handle shot and update the UI
+                    String result = gameLogic.handleShot(row, col, side);
+
+                    if (result.equals("Hit!")) {
+                        ImageIcon icon = new ImageIcon("res/Game/Ship/" + "hit.png");
+                        button[row][col].setIcon(icon);
+                    } else if (result.equals("Miss!")) {
+                        ImageIcon icon = new ImageIcon("res/Game/Ship/" + "miss.png");
+                        button[row][col].setIcon(icon);
+                    } else if (result.equals("Ship Sunk!")) {
+                        ImageIcon icon = new ImageIcon("res/Game/Ship/" + "hit.png");
+                        button[row][col].setIcon(icon);
+                        JOptionPane.showMessageDialog(null, "A ship has been sunk!");
+                    }
+
+                    // Update the number of remaining ships
+                    updateRemainingShips();
+                });
+
+                Panel.add(button[i][j]);
+            }
+        }
+
+        return Panel;
+
     }
 
 
