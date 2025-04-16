@@ -5,6 +5,7 @@ import java.util.Random;
 public class GameLogic {
 
     private int[][] opponentTiles;
+    private int[][] original_opponentTiles;
     private int[][] playerTiles;
     private int size = 4;
     private int opponentShip = 3;  // Number of ships to place
@@ -15,11 +16,13 @@ public class GameLogic {
     // Initialize empty tiles
     private void initTiles() {
         opponentTiles = new int[size][size];
+        original_opponentTiles = new int[size][size];
         playerTiles = new int[size][size];
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
                 opponentTiles[i][j] = 0;
                 playerTiles[i][j] = 0;
+                original_opponentTiles[i][j] = 0;
             }
         }
     }
@@ -62,6 +65,10 @@ public class GameLogic {
                 if (opponentTiles[row][col] == 0 && opponentTiles[row][col + 1] == 0) {
                     opponentTiles[row][col] = shipNumber;
                     opponentTiles[row][col + 1] = shipNumber;
+
+                    original_opponentTiles[row][col] = shipNumber;
+                    original_opponentTiles[row][col + 1] = shipNumber;
+
                     placed = true;
                 }
             } else {
@@ -73,6 +80,10 @@ public class GameLogic {
                 if (opponentTiles[row][col] == 0 && opponentTiles[row + 1][col] == 0) {
                     opponentTiles[row][col] = shipNumber;
                     opponentTiles[row + 1][col] = shipNumber;
+
+                    original_opponentTiles[row][col] = shipNumber;
+                    original_opponentTiles[row + 1][col] = shipNumber;
+
                     placed = true;
                 }
             }
@@ -91,7 +102,7 @@ public class GameLogic {
     }
 
     public int[][] getOpponentTiles() {
-        return opponentTiles;
+        return original_opponentTiles;
     }
 
     // Handle a shot and return the result (hit or miss)
@@ -128,8 +139,4 @@ public class GameLogic {
         return opponentShip;
     }
 
-
-    public static void main(String[] args) {
-        GameLogic gameLogic = new GameLogic();
-    }
 }

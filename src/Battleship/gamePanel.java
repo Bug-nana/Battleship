@@ -35,14 +35,14 @@ public class gamePanel extends JPanel {
                     String result = gameLogic.handleShot(row, col);
 
                     if (result.equals("Hit!")) {
-                        opponentButtons[row][col].setBackground(Color.RED); // Mark as hit
-                        opponentButtons[row][col].setText("H"); // Show 'H' for hit
+                        ImageIcon icon = new ImageIcon("res/Game/Ship/" + "hit.png");
+                        opponentButtons[row][col].setIcon(icon);
                     } else if (result.equals("Miss!")) {
-                        opponentButtons[row][col].setBackground(Color.WHITE); // Mark as miss
-                        opponentButtons[row][col].setText("M"); // Show 'M' for miss
+                        ImageIcon icon = new ImageIcon("res/Game/Ship/" + "miss.png");
+                        opponentButtons[row][col].setIcon(icon);
                     } else if (result.equals("Ship Sunk!")) {
-                        opponentButtons[row][col].setBackground(Color.RED); // Mark as hit
-                        opponentButtons[row][col].setText("H"); // Show 'H' for hit
+                        ImageIcon icon = new ImageIcon("res/Game/Ship/" + "hit.png");
+                        opponentButtons[row][col].setIcon(icon);
                         JOptionPane.showMessageDialog(null, "A ship has been sunk!");
                     }
 
@@ -66,30 +66,15 @@ public class gamePanel extends JPanel {
 
     // Update the opponent's grid to reflect the ships placed
     private void updateOpponentGrid() {
-        int[][] opponentTiles = gameLogic.getOpponentTiles();
-
         for (int i = 0; i < SIZE; i++) {
             for (int j = 0; j < SIZE; j++) {
                 JButton button = opponentButtons[i][j];
-                int tile = opponentTiles[i][j];
+                ImageIcon icon = new ImageIcon("res/Game/Ship/" + "transparent.png");
 
-                if (tile != 0) {
-                    // Use different images for part 1 and part 2 of the ship
-                    String imageName = getShipImageName(opponentTiles, i, j);
-                    ImageIcon icon = new ImageIcon("res/Game/Ship/" + imageName);
-
-                    button.setIcon(icon);
-                    button.setOpaque(false);
-                    button.setContentAreaFilled(false);
-                    button.setBorderPainted(true);
-                } else {
-                    // Empty tile: transparent
-                    button.setText("");
-                    button.setIcon(null);
-                    button.setOpaque(false);
-                    button.setContentAreaFilled(false);
-                    button.setBorderPainted(true);
-                }
+                button.setIcon(icon);
+                button.setOpaque(false);
+                button.setContentAreaFilled(false);
+                button.setBorderPainted(true);
 
 // Apply a visible border to all buttons
                 button.setBorder(new LineBorder(Color.BLACK, 1));
@@ -101,17 +86,25 @@ public class gamePanel extends JPanel {
 
 
     private String getShipImageName(int[][] grid, int i, int j) {
-        int val = grid[i][j];
+        int val = Math.abs(grid[i][j]);
 
-        // Check horizontal ship
-        if (j < SIZE - 1 && grid[i][j + 1] == val) return "opp_ship_left.png";
-        if (j > 0 && grid[i][j - 1] == val) return "opp_ship_right.png";
+        // Check for horizontal ship first
+        if (j > 0 && Math.abs(grid[i][j - 1]) == val) {
+            return "opp_ship_right.png"; // This tile is the right end
+        }
+        if (j < SIZE - 1 && Math.abs(grid[i][j + 1]) == val) {
+            return "opp_ship_left.png"; // This tile is the left end
+        }
 
-        // Check vertical ship
-        if (i < SIZE - 1 && grid[i + 1][j] == val) return "opp_ship_top.png";
-        if (i > 0 && grid[i - 1][j] == val) return "opp_ship_bottom.png";
+        // Check for vertical ship
+        if (i > 0 && Math.abs(grid[i - 1][j]) == val) {
+            return "opp_ship_bottom.png"; // This tile is the bottom end
+        }
+        if (i < SIZE - 1 && Math.abs(grid[i + 1][j]) == val) {
+            return "opp_ship_top.png"; // This tile is the top end
+        }
 
-        return null;
+        return null; // shouldn't happen
     }
 
     // After updating the opponent grid or handling a shot in the gamePanel class
@@ -123,6 +116,25 @@ public class gamePanel extends JPanel {
         if (remainingShips == 0) {
             JOptionPane.showMessageDialog(this, "Game Over! You Win!");
             // You can disable further interaction or close the game
+            int[][] opponentTiles = gameLogic.getOpponentTiles();
+
+
+            for (int i = 0; i < SIZE; i++) {
+                for (int j = 0; j < SIZE; j++) {
+                    JButton button = opponentButtons[i][j];
+                    int tile = opponentTiles[i][j];
+
+                    if (tile != 0) {
+                        // Use different images for part 1 and part 2 of the ship
+                        String imageName = getShipImageName(opponentTiles, i, j);
+                        ImageIcon icon = new ImageIcon("res/Game/Ship/" + imageName);
+
+                        button.setIcon(icon);
+                        button.setOpaque(false);
+                    }
+                }
+            }
+
         }
     }
 
